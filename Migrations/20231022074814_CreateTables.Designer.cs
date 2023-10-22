@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace last_try_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231019141530_notmappedconfirmationpassword")]
-    partial class notmappedconfirmationpassword
+    [Migration("20231022074814_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,6 +48,9 @@ namespace last_try_api.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -115,17 +118,12 @@ namespace last_try_api.Migrations
             modelBuilder.Entity("last_try_api.Models.Demand", b =>
                 {
                     b.HasOne("last_try_api.Models.Complaint", "Complaint")
-                        .WithMany("Demands")
+                        .WithMany()
                         .HasForeignKey("ComplaintId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Complaint");
-                });
-
-            modelBuilder.Entity("last_try_api.Models.Complaint", b =>
-                {
-                    b.Navigation("Demands");
                 });
 #pragma warning restore 612, 618
         }

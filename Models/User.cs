@@ -26,5 +26,6 @@ namespace last_try_api.Models
         public string ConfirmPassword { get; set; }
 
         public string Role { get; set; } = "user"; // Set default role to "user"
+        //
     }
 }

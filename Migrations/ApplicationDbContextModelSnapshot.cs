@@ -47,6 +47,9 @@ namespace last_try_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -113,17 +116,12 @@ namespace last_try_api.Migrations
             modelBuilder.Entity("last_try_api.Models.Demand", b =>
                 {
                     b.HasOne("last_try_api.Models.Complaint", "Complaint")
-                        .WithMany("Demands")
+                        .WithMany()
                         .HasForeignKey("ComplaintId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Complaint");
-                });
-
-            modelBuilder.Entity("last_try_api.Models.Complaint", b =>
-                {
-                    b.Navigation("Demands");
                 });
 #pragma warning restore 612, 618
         }

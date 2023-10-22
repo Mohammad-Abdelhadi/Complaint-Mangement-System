@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace last_try_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231019141051_createtables")]
-    partial class createtables
+    [Migration("20231022075423_CreateTabless")]
+    partial class CreateTabless
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,6 +48,9 @@ namespace last_try_api.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -88,10 +91,6 @@ namespace last_try_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("ConfirmPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -119,17 +118,12 @@ namespace last_try_api.Migrations
             modelBuilder.Entity("last_try_api.Models.Demand", b =>
                 {
                     b.HasOne("last_try_api.Models.Complaint", "Complaint")
-                        .WithMany("Demands")
+                        .WithMany()
                         .HasForeignKey("ComplaintId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Complaint");
-                });
-
-            modelBuilder.Entity("last_try_api.Models.Complaint", b =>
-                {
-                    b.Navigation("Demands");
                 });
 #pragma warning restore 612, 618
         }

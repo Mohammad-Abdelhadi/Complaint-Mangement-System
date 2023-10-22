@@ -1,6 +1,8 @@
 ﻿using last_try_api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -23,27 +25,26 @@ public class AuthController : ControllerBase
             return Conflict(new { message = "Email already registered" });
         }
 
-        // Hash the password before saving to the database (implement password hashing logic)
-        // For example, using ASP.NET Core's built-in PasswordHasher
+        // using ASP.NET Core's built-in PasswordHasher
         var passwordHasher = new PasswordHasher<User>();
         user.Password = passwordHasher.HashPassword(user, user.Password);
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = "Registration successful" });
+        return Ok(new { message = "Registration successful", user.Role });
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserLoginModel userLoginModel)
+    public IActionResult Login(UserLoginModel userLoginModel)
     {
-        // Find the user by username (or email, depending on your login logic)
-        var user = _context.Users.SingleOrDefault(u => u.Username == userLoginModel.Email);
+        // Find the user by Email
+        var user = _context.Users.SingleOrDefault(u => u.Email == userLoginModel.Email);
 
         // Check if the user exists
         if (user == null)
         {
-            return Unauthorized(new { message = "Invalid username or password" });
+            return Unauthorized(new { message = "Email Not Found" });
         }
 
         var passwordHasher = new PasswordHasher<User>();
@@ -51,12 +52,10 @@ public class AuthController : ControllerBase
 
         if (result == PasswordVerificationResult.Failed)
         {
-            return Unauthorized(new { message = "Invalid username or password" });
+            return Unauthorized(new { message = "Invalid Email or password" });
         }
-
-        // Implement authentication token generation logic here (JWT, for example)
-        var token = "your_generated_token_here";
-
-        return Ok(new { message = "Login successful", token });
+        return Ok(new { message = "login Successful" ,user.Id});
     }
+    
+
 }

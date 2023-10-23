@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace last_try_api.Models
 {
@@ -25,6 +26,7 @@ namespace last_try_api.Models
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
 
+        [JsonIgnore]
         public string Role { get; set; } = "user"; // Set default role to "user"
         //
     }

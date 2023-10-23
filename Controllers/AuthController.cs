@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized(new { message = "Invalid Email or password" });
         }
-        return Ok(new { message = "login Successful" ,user.Id});
+        return Ok(new { message = "login Successful" });
     }
     
 

@@ -1,6 +1,9 @@
 ﻿using last_try_api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace last_try_api.Controllers
 {
@@ -16,12 +19,20 @@ namespace last_try_api.Controllers
         }
 
         // Get All Complaints
-        [HttpGet("GetComplaints")]
-        public IActionResult GetComplaints()
+        [HttpGet("GetComplaints/{Id}")]
+
+        public IActionResult GetComplaints(int Id)
         {
-            var complaints = _context.Complaints.ToList();
-            return Ok(complaints);
+            // in the db , Users Table I got 2 admins With (Id 1 And 8) 
+            if (Id == 1 || Id == 8)
+            {
+                var complaints = _context.Complaints.ToList();
+                return Ok(complaints);
+            }
+            return Unauthorized( new { message = "You Dont Have Premmesion ." });
+            
         }
+
 
 
 
@@ -52,7 +63,7 @@ namespace last_try_api.Controllers
             return Ok(complaint);
         }
 
-        // Edit EditComplaint 
+        // Edit EditComplaint , id Of Complaint .
         [HttpPut("EditComplaint/{id}")]
         public IActionResult EditComplaint(int id, [FromBody] Complaint updatedComplaint)
         {
@@ -60,15 +71,22 @@ namespace last_try_api.Controllers
 
             if (existingComplaint == null)
             {
-                return NotFound(); // Return 404 Not Found if complaint with given id is not found
+                return NotFound();
             }
 
- 
-            // You might want to validate and update other properties as needed
-            _context.Complaints.Update(updatedComplaint);
+            // Update properties of the existing complaint
+            existingComplaint.ComplaintText = updatedComplaint.ComplaintText;
+            existingComplaint.AttachmentPath = updatedComplaint.AttachmentPath;
+            existingComplaint.Language = updatedComplaint.Language;
+            existingComplaint.UserName = updatedComplaint.UserName;
+            existingComplaint.PhoneNumber = updatedComplaint.PhoneNumber;
+            // Note: UserId should not be updated here if it's a foreign key relationship
 
-            return Ok(updatedComplaint);
+            _context.SaveChanges(); // Save changes to the database
+
+            return Ok(existingComplaint);
         }
+
 
         // Post An complaint Depend in the userId.
         [HttpPost("sendcomplaint")]
@@ -84,7 +102,7 @@ namespace last_try_api.Controllers
             _context.Complaints.Add(complaint);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Complaint sent successfully" });
+            return Ok(new { message = "Complaint sent successfully" ,complaint.IsApproved});
         }
 
 

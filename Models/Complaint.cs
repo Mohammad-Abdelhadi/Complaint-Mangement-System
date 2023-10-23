@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace last_try_api.Models
 {
@@ -18,8 +19,8 @@ namespace last_try_api.Models
         [Required(ErrorMessage = "User basic information is required.")]
         public string UserName { get; set; }
         public string PhoneNumber { get; set; }
-
-        public bool IsApproved { get; set; } // Indicates whether the complaint is approved by the administrator
+        [JsonIgnore]
+        public bool IsApproved { get; set; } = false;  // Indicates whether the complaint is approved by the administrator
 
         [Required(ErrorMessage = "User ID is required.")]
         public int UserId { get; set; } // Foreign key to link with the User table

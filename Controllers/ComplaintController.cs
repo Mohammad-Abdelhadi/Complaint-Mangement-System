@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
 
 namespace last_try_api.Controllers
@@ -12,10 +13,12 @@ namespace last_try_api.Controllers
     public class ComplaintController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ComplaintController(ApplicationDbContext context)
+        public ComplaintController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            _hostEnvironment = hostEnvironment; 
         }
 
         // Get All Complaints
@@ -63,7 +66,7 @@ namespace last_try_api.Controllers
             return Ok(complaint);
         }
 
-        // Edit EditComplaint , id Of Complaint .
+        // Edit EditComplaint, id Of Complaint.
         [HttpPut("EditComplaint/{id}")]
         public IActionResult EditComplaint(int id, [FromBody] Complaint updatedComplaint)
         {
@@ -74,13 +77,15 @@ namespace last_try_api.Controllers
                 return NotFound();
             }
 
+            // Check if the complaint is approved, and if it is, prevent editing
+            if (existingComplaint.IsApproved)
+            {
+                return Unauthorized("Complaint is already approved and cannot be edited.");
+            }
+
             // Update properties of the existing complaint
             existingComplaint.ComplaintText = updatedComplaint.ComplaintText;
-            existingComplaint.AttachmentPath = updatedComplaint.AttachmentPath;
             existingComplaint.Language = updatedComplaint.Language;
-            existingComplaint.UserName = updatedComplaint.UserName;
-            existingComplaint.PhoneNumber = updatedComplaint.PhoneNumber;
-            // Note: UserId should not be updated here if it's a foreign key relationship
 
             _context.SaveChanges(); // Save changes to the database
 
@@ -89,21 +94,76 @@ namespace last_try_api.Controllers
 
 
         // Post An complaint Depend in the userId.
+        //[HttpPost("sendcomplaint")]
+        //public async Task<IActionResult> SendComplaint([FromBody] Complaint complaint)
+        //{
+        //    // Validate the complaint model
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    // Add the complaint to the context and save changes
+        //    _context.Complaints.Add(complaint);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok(new { message = "Complaint sent successfully" ,complaint.IsApproved});
+        //}
         [HttpPost("sendcomplaint")]
-        public async Task<IActionResult> SendComplaint([FromBody] Complaint complaint)
+        public async Task<IActionResult> sendcomplaint([FromForm] Complaint imageModel)
         {
-            // Validate the complaint model
-            if (!ModelState.IsValid)
+            if (imageModel.File != null && imageModel.File.Length > 0 && ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                try
+                {
+                    // Save image to a specific directory within the project
+                    string uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                    if (!Directory.Exists(uploadDirectory))
+                    {
+                        Directory.CreateDirectory(uploadDirectory);
+                    }
+
+                    // Save the file
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageModel.File.FileName);
+                    string filePath = Path.Combine(uploadDirectory, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageModel.File.CopyToAsync(fileStream);
+                    }
+
+                    // Set the FileName property of the model to the file name
+                    imageModel.FileName = fileName;
+
+                    // Create a new object without the file-related properties
+                    var complaintWithoutFile = new Complaint
+                    {
+                        ComplaintText = imageModel.ComplaintText,
+                        Language = imageModel.Language,
+                        IsApproved = imageModel.IsApproved,
+                        UserId = imageModel.UserId,
+                        FileName = imageModel.FileName  // Set the file name in the model
+                                                        // Add other properties as needed
+                    };
+
+                    // Insert record without the file-related properties
+                    _context.Add(complaintWithoutFile);
+                    await _context.SaveChangesAsync();
+
+                    // Return a success response if necessary
+                    return Ok("Image uploaded successfully.");
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions (return a meaningful error response)
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
             }
 
-            // Add the complaint to the context and save changes
-            _context.Complaints.Add(complaint);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Complaint sent successfully" ,complaint.IsApproved});
+            // Handle validation errors (file required and other model validations)
+            ModelState.AddModelError("File", "File is required.");
+            return BadRequest(ModelState);
         }
+        
 
 
 

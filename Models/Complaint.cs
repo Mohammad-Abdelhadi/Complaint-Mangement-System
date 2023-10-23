@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace last_try_api.Models
@@ -11,14 +12,14 @@ namespace last_try_api.Models
         [Required(ErrorMessage = "Complaint text is required.")]
         public string ComplaintText { get; set; }
 
-        public string AttachmentPath { get; set; } // Store the file path for the attached PDF
+        public string FileName { get; set; } // Store the file path for the attached PDF
+        [NotMapped]
+        public IFormFile File { get; set; }
 
         [Required(ErrorMessage = "Language is required.")]
         public string Language { get; set; } // Should be either "Arabic" or "English"
 
-        [Required(ErrorMessage = "User basic information is required.")]
-        public string UserName { get; set; }
-        public string PhoneNumber { get; set; }
+     
         [JsonIgnore]
         public bool IsApproved { get; set; } = false;  // Indicates whether the complaint is approved by the administrator
 

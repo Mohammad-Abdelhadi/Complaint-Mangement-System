@@ -122,15 +122,16 @@ namespace last_try_api.Controllers
                     {
                         Directory.CreateDirectory(uploadDirectory);
                     }
+                    string uniqueId = Guid.NewGuid().ToString().Substring(0, 5);
 
                     // Save the file
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageModel.File.FileName);
+                    string fileName = uniqueId + Path.GetExtension(imageModel.File.FileName);
                     string filePath = Path.Combine(uploadDirectory, fileName);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await imageModel.File.CopyToAsync(fileStream);
                     }
-
+                    
                     // Set the FileName property of the model to the file name
                     imageModel.FileName = fileName;
 
@@ -141,11 +142,10 @@ namespace last_try_api.Controllers
                         Language = imageModel.Language,
                         IsApproved = imageModel.IsApproved,
                         UserId = imageModel.UserId,
-                        FileName = imageModel.FileName  // Set the file name in the model
-                                                        // Add other properties as needed
+                        FileName = imageModel.FileName  
+                                                       
                     };
 
-                    // Insert record without the file-related properties
                     _context.Add(complaintWithoutFile);
                     await _context.SaveChangesAsync();
 

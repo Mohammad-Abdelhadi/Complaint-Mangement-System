@@ -35,7 +35,6 @@ namespace last_try_api.Models
 
 
 
-        [JsonIgnore]
         public string Role { get; set; } = "user"; // Set default role to "user"
         //
     }

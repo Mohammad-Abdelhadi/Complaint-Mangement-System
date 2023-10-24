@@ -23,11 +23,10 @@ namespace last_try_api.Controllers
 
         // Get All Complaints
         [HttpGet("GetComplaints/{Id}")]
-
         public IActionResult GetComplaints(int Id)
         {
             // in the db , Users Table I got 2 admins With (Id 1 And 8) 
-            if (Id == 1 || Id == 8)
+            if (Id == 1 || Id ==8)
             {
                 var complaints = _context.Complaints.ToList();
                 return Ok(complaints);
@@ -120,7 +119,7 @@ namespace last_try_api.Controllers
                     string uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
                     if (!Directory.Exists(uploadDirectory))
                     {
-                        Directory.CreateDirectory(uploadDirectory);
+                        Directory.CreateDirectory(uploadDirectory); 
                     }
                     string uniqueId = Guid.NewGuid().ToString().Substring(0, 5);
 

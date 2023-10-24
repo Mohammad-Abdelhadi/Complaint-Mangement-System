@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = "Registration successful", user.Role });
+        return Ok(new { message = "Registration successful", Id = user.Id,Email = user.Email,username=user.Username,phonenumber = user.PhoneNumber,role=user.Role });
     }
 
     [HttpPost("login")]
@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized(new { message = "Invalid Email or password" });
         }
-        return Ok(new { message = "login Successful" });
+        return Ok(user);
     }
     
 

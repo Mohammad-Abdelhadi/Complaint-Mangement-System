@@ -26,7 +26,7 @@ namespace last_try_api.Controllers
         public IActionResult GetComplaints(int Id)
         {
             // in the db , Users Table I got 2 admins With (Id 1 And 8) 
-            if (Id == 1 || Id ==8)
+            if (Id == 16)
             {
                 var complaints = _context.Complaints.ToList();
                 return Ok(complaints);

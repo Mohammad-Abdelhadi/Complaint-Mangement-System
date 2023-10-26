@@ -13,8 +13,9 @@ namespace last_try_api.Models
         public string ComplaintText { get; set; }
 
         public string FileName { get; set; } // Store the file path for the attached PDF
-        [NotMapped]
-        public IFormFile File { get; set; }
+        //[NotMapped]
+        //[JsonIgnore]
+        //public IFormFile File { get; set; }
 
         [Required(ErrorMessage = "Language is required.")]
         public string Language { get; set; } // Should be either "Arabic" or "English"

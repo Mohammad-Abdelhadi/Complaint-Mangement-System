@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
 
@@ -109,59 +110,19 @@ namespace last_try_api.Controllers
         //    return Ok(new { message = "Complaint sent successfully" ,complaint.IsApproved});
         //}
         [HttpPost("sendcomplaint")]
-        public async Task<IActionResult> sendcomplaint([FromForm] Complaint imageModel)
-        {
-            if (imageModel.File != null && imageModel.File.Length > 0 && ModelState.IsValid)
-            {
-                try
+        public async Task<IActionResult> sendcomplaint( Complaint complaint)
+           
+              
                 {
                     // Save image to a specific directory within the project
-                    string uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-                    if (!Directory.Exists(uploadDirectory))
-                    {
-                        Directory.CreateDirectory(uploadDirectory); 
-                    }
-                    string uniqueId = Guid.NewGuid().ToString().Substring(0, 5);
-
-                    // Save the file
-                    string fileName = uniqueId + Path.GetExtension(imageModel.File.FileName);
-                    string filePath = Path.Combine(uploadDirectory, fileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imageModel.File.CopyToAsync(fileStream);
-                    }
-                    
-                    // Set the FileName property of the model to the file name
-                    imageModel.FileName = fileName;
-
-                    // Create a new object without the file-related properties
-                    var complaintWithoutFile = new Complaint
-                    {
-                        ComplaintText = imageModel.ComplaintText,
-                        Language = imageModel.Language,
-                        IsApproved = imageModel.IsApproved,
-                        UserId = imageModel.UserId,
-                        FileName = imageModel.FileName  
-                                                       
-                    };
-
-                    _context.Add(complaintWithoutFile);
+                    _context.Complaints.Add(complaint);
                     await _context.SaveChangesAsync();
 
                     // Return a success response if necessary
                     return Ok("Image uploaded successfully.");
                 }
-                catch (Exception ex)
-                {
-                    // Handle exceptions (return a meaningful error response)
-                    return StatusCode(500, $"Internal server error: {ex.Message}");
-                }
-            }
+               
 
-            // Handle validation errors (file required and other model validations)
-            ModelState.AddModelError("File", "File is required.");
-            return BadRequest(ModelState);
-        }
         
 
 

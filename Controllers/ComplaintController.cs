@@ -111,13 +111,10 @@ namespace last_try_api.Controllers
         //}
         [HttpPost("sendcomplaint")]
         public async Task<IActionResult> sendcomplaint( Complaint complaint)
-           
-              
                 {
                     // Save image to a specific directory within the project
                     _context.Complaints.Add(complaint);
                     await _context.SaveChangesAsync();
-
                     // Return a success response if necessary
                     return Ok("Image uploaded successfully.");
                 }

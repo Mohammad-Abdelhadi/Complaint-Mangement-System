@@ -4,7 +4,7 @@
 
 namespace last_try_api.Migrations
 {
-    public partial class createtables : Migration
+    public partial class creattables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

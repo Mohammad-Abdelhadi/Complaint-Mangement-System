@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace last_try_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231023130012_createtables")]
-    partial class createtables
+    [Migration("20231029100423_creattables")]
+    partial class creattables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -13,16 +13,13 @@ namespace last_try_api.Models
         public string ComplaintText { get; set; }
 
         public string FileName { get; set; } // Store the file path for the attached PDF
-        //[NotMapped]
-        //[JsonIgnore]
-        //public IFormFile File { get; set; }
+
 
         [Required(ErrorMessage = "Language is required.")]
         public string Language { get; set; } // Should be either "Arabic" or "English"
 
      
-        [JsonIgnore]
-        public bool IsApproved { get; set; } = false;  // Indicates whether the complaint is approved by the administrator
+        public bool IsApproved { get; set; }   // Indicates whether the complaint is approved by the administrator
 
         [Required(ErrorMessage = "User ID is required.")]
         public int UserId { get; set; } // Foreign key to link with the User table

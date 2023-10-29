@@ -27,7 +27,7 @@ namespace last_try_api.Controllers
         public IActionResult GetComplaints(int Id)
         {
             // in the db , Users Table I got 2 admins With (Id 1 And 8) 
-            if (Id == 16)
+            if (Id == 1)
             {
                 var complaints = _context.Complaints.ToList();
                 return Ok(complaints);
@@ -65,13 +65,10 @@ namespace last_try_api.Controllers
 
             return Ok(complaint);
         }
-
-        // Edit EditComplaint, id Of Complaint.
         [HttpPut("EditComplaint/{id}")]
-        public IActionResult EditComplaint(int id, [FromBody] Complaint updatedComplaint)
+        public async Task<IActionResult> EditComplaint(int id, [FromBody] Complaint updatedComplaint)
         {
-            var existingComplaint = _context.Complaints.Find(id);
-
+            var existingComplaint = await _context.Complaints.FindAsync(id);
             if (existingComplaint == null)
             {
                 return NotFound();
@@ -80,35 +77,20 @@ namespace last_try_api.Controllers
             // Check if the complaint is approved, and if it is, prevent editing
             if (existingComplaint.IsApproved)
             {
-                return Unauthorized("Complaint is already approved and cannot be edited.");
+                return BadRequest("Complaint is already approved and cannot be edited.");
             }
 
-            // Update properties of the existing complaint
-            existingComplaint.ComplaintText = updatedComplaint.ComplaintText;
-            existingComplaint.Language = updatedComplaint.Language;
+            // Update properties of the existing complaint with values from updatedComplaint
+            existingComplaint.IsApproved = updatedComplaint.IsApproved;
 
-            _context.SaveChanges(); // Save changes to the database
+            // Save changes to the database asynchronously
+            _context.Update(existingComplaint);
+            await _context.SaveChangesAsync();
 
-            return Ok(existingComplaint);
+            return Ok(updatedComplaint);
         }
 
 
-        // Post An complaint Depend in the userId.
-        //[HttpPost("sendcomplaint")]
-        //public async Task<IActionResult> SendComplaint([FromBody] Complaint complaint)
-        //{
-        //    // Validate the complaint model
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    // Add the complaint to the context and save changes
-        //    _context.Complaints.Add(complaint);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(new { message = "Complaint sent successfully" ,complaint.IsApproved});
-        //}
         [HttpPost("sendcomplaint")]
         public async Task<IActionResult> sendcomplaint( Complaint complaint)
                 {

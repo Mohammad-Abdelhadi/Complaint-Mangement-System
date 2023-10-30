@@ -2490,11 +2490,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mohammad.a\\source\\repos\\last try api\\last try api.csproj",
+      "projectUniqueName": "C:\\Users\\mohammad.a\\Desktop\\CompApp\\Complaint-Mangement-System\\last try api.csproj",
       "projectName": "last try api",
-      "projectPath": "C:\\Users\\mohammad.a\\source\\repos\\last try api\\last try api.csproj",
+      "projectPath": "C:\\Users\\mohammad.a\\Desktop\\CompApp\\Complaint-Mangement-System\\last try api.csproj",
       "packagesPath": "C:\\Users\\mohammad.a\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mohammad.a\\source\\repos\\last try api\\obj\\",
+      "outputPath": "C:\\Users\\mohammad.a\\Desktop\\CompApp\\Complaint-Mangement-System\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mohammad.a\\AppData\\Roaming\\NuGet\\NuGet.Config",
